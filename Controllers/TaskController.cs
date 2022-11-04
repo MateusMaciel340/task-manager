@@ -19,6 +19,16 @@ namespace task_manager.Controllers
             _context = context;
         }
 
+        // POST - Adding Task
+        [HttpPost]
+        public IActionResult AddingTask (Assignment assignment)
+        {
+            _context.Add(assignment);
+            _context.SaveChanges();
+
+            return Ok(assignment);
+        }
+
         // GET - Get all Tasks
         [HttpGet("GetAllTasks")]
         public IActionResult GetAllTasks ()
@@ -62,6 +72,40 @@ namespace task_manager.Controllers
         {
             var assignment = _context.Assignment.Where(x => x.Status == status);
             return Ok(assignment);
+        }
+
+        // PUT - Update Task
+        [HttpPut("{id}")]
+        public IActionResult UpdateTask (int id, Assignment assignment)
+        {
+            var assignmentDatabase = _context.Assignment.Find(id);
+
+            if (assignmentDatabase == null)
+                return NotFound();
+
+            assignmentDatabase.Title = assignment.Title;
+            assignmentDatabase.Date = assignment.Date;
+            assignmentDatabase.Status = assignment.Status;
+
+            _context.Assignment.Update(assignmentDatabase);
+            _context.SaveChanges();
+
+            return Ok(assignmentDatabase);
+        }
+
+        // DELETE - RemoveTask
+        [HttpDelete("{id}")]
+        public IActionResult RemoveTask (int id) 
+        {
+            var assignmentDatabase = _context.Assignment.Find(id);
+
+            if (assignmentDatabase == null)
+                return NotFound();
+
+            _context.Assignment.Remove(assignmentDatabase);
+            _context.SaveChanges();
+
+            return NoContent();
         }
     }
 }
